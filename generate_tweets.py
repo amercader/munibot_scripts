@@ -34,9 +34,20 @@ def create(db_path, profile):
         FROM {table}
         WHERE {tweet_field} IS NOT NULL
         """
-    data = db.execute(sql)
+    tweets_query = db.execute(sql)
 
-    return FILE_TEMPLATE.format(json.dumps({row[0]: row[1] for row in data.fetchall()}))
+    tweets = {row[0]: row[1] for row in tweets_query.fetchall()}
+
+    if profile == "cat":
+        count = db.execute(
+            f"SELECT COUNT(*) FROM {table} WHERE codcomuni = '09'"
+        ).fetchone()[0]
+    else:
+        count = db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+
+    out = {"tweets": tweets, "total": count, "tweeted": len(tweets.keys())}
+
+    return FILE_TEMPLATE.format(json.dumps(out))
 
 
 def db_path_from_config(path, profile):
