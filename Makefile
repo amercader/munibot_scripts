@@ -19,6 +19,7 @@ geojson_es: ## Export PostGIS table to GeoJSON (es)
 geojson_cat: ## Export PostGIS table to GeoJSON (cat)
 	ogr2ogr -select nameunit,nameprov,codine -preserve_fid -where "codcomuni = '09'" -f "GeoJSON" $(DATA_DIRECTORY)/cat.geojson PG:"host=localhost port=5433 user=munis_user dbname=munis password=$(POSTGIS_PASSWORD)" "es"
 
+
 tiles_fr: ## Build tiles (fr)
 	docker run  -it --rm -v $(DATA_DIRECTORY):/data tippecanoe:latest tippecanoe -e /data/tiles/fr -f -l fr -z 11 -Z 3 /data/fr.geojson
 
@@ -28,6 +29,10 @@ tiles_es: ## Build tiles (es)
 tiles_cat: ## Build tiles (cat)
 	docker run  -it --rm -v $(DATA_DIRECTORY):/data tippecanoe:latest tippecanoe -e /data/tiles/cat -f -l cat -z 11 -Z 5 /data/cat.geojson
 
+tiles_us: ## Build tiles (us)
+	docker run  -it --rm -v $(DATA_DIRECTORY):/data tippecanoe:latest tippecanoe -e /data/tiles/us -f -l us -z 8 -Z 1 /data/us.geojson
+
+
 s3_fr: ## Upload tiles to s3 (fr)
 	aws --profile amercader s3 cp $(DATA_DIRECTORY)/tiles/fr s3://tiles.amercader.net/maps/vector/fr/ --recursive --content-type application/x-protobuf --content-encoding 'gzip'
 
@@ -36,3 +41,6 @@ s3_es: ## Upload tiles to s3 (es)
 
 s3_cat: ## Upload tiles to s3 (cat)
 	aws --profile amercader s3 cp $(DATA_DIRECTORY)/tiles/cat s3://tiles.amercader.net/maps/vector/cat/ --recursive --content-type application/x-protobuf --content-encoding 'gzip'
+
+s3_us: ## Upload tiles to s3 (us)
+	aws --profile amercader s3 cp $(DATA_DIRECTORY)/tiles/us s3://tiles.amercader.net/maps/vector/us/ --recursive --content-type application/x-protobuf --content-encoding 'gzip'

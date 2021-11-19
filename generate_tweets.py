@@ -28,6 +28,11 @@ def create(db_path, profile):
         code_field = "insee"
         tweet_field = "tweet_fr"
         table = "communes_fr"
+    elif profile == "us":
+        code_field = "GEOID"
+        tweet_field = "tweet_us"
+        table = "us_counties"
+
 
     sql = f"""
         SELECT {code_field}, {tweet_field}
