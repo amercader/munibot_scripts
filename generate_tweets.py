@@ -19,19 +19,19 @@ def create(db_path, profile):
     if profile == "es":
         code_field = "cod_ine"
         tweet_field = "tweet_es"
-        table = "munis_esp"
+        table = "es"
     elif profile == "cat":
         code_field = "cod_ine"
         tweet_field = "tweet_cat"
-        table = "munis_esp"
+        table = "es"
     elif profile == "fr":
         code_field = "insee"
         tweet_field = "tweet_fr"
-        table = "communes_fr"
+        table = "fr"
     elif profile == "us":
         code_field = "GEOID"
         tweet_field = "tweet_us"
-        table = "us_counties"
+        table = "us"
 
 
     sql = f"""
