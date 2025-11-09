@@ -8,7 +8,7 @@ import configparser
 
 
 FILE_TEMPLATE = """
-window.MunibotTweets = {}
+window.MunibotPosts = {}
 """
 
 
@@ -18,30 +18,29 @@ def create(db_path, profile):
 
     if profile == "es":
         code_field = "cod_ine"
-        tweet_field = "tweet_es"
+        mastodon_field = "mastodon_es"
         table = "es"
     elif profile == "cat":
         code_field = "cod_ine"
-        tweet_field = "tweet_cat"
+        mastodon_field = "mastodon_cat"
         table = "es"
     elif profile == "fr":
         code_field = "insee"
-        tweet_field = "tweet_fr"
+        mastodon_field = "mastodon_fr"
         table = "fr"
     elif profile == "us":
         code_field = "GEOID"
-        tweet_field = "tweet_us"
+        mastodon_field = "mastodon_us"
         table = "us"
 
-
     sql = f"""
-        SELECT {code_field}, {tweet_field}
+        SELECT {code_field}, {mastodon_field}
         FROM {table}
-        WHERE {tweet_field} IS NOT NULL
+        WHERE {mastodon_field} IS NOT NULL
         """
-    tweets_query = db.execute(sql)
+    posts_query = db.execute(sql)
 
-    tweets = {row[0]: row[1] for row in tweets_query.fetchall()}
+    posts = {row[0]: row[1] for row in posts_query.fetchall()}
 
     if profile == "cat":
         count = db.execute(
@@ -50,7 +49,7 @@ def create(db_path, profile):
     else:
         count = db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
 
-    out = {"tweets": tweets, "total": count, "tweeted": len(tweets.keys())}
+    out = {"mastodon": {"posts": posts, "total": count, "posted": len(posts.keys())}}
 
     return FILE_TEMPLATE.format(json.dumps(out))
 
@@ -71,7 +70,7 @@ otherwise pass the location with the "--config" parameter""".strip()
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Generate current tweets JSON files")
+    parser = argparse.ArgumentParser(description="Generate current posts JSON files")
 
     parser.add_argument("profile", help="Profile to export")
     parser.add_argument("-c", "--config", help="Munibot config file")
